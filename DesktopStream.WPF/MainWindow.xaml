@@ -1,0 +1,58 @@
+﻿<Window x:Class="DesktopStream.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopStream.WPF"
+        mc:Ignorable="d"
+        Title="桌面直播助手" Height="350" Width="530" ResizeMode="CanMinimize" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="2" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="0" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Width="60" x:Name="StartLiveBtn" Click="StartLiveBtn_Click">开始直播</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Width="60" x:Name="StopLiveBtn" Click="StopLiveBtn_Click" IsEnabled="False">结束直播</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Label>状态：</Label>
+            <Label x:Name="StatusLabel" IsEnabled="False">未开始</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="5" Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Label>网速：</Label>
+            <Label x:Name="SpeedLabel">0kbps</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Label>音频：</Label>
+            <StackPanel x:Name="MicrophonePanel" Orientation="Vertical" VerticalAlignment="Center">
+            </StackPanel>             
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Label>分辨率：</Label>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                <ComboBox x:Name="DesktopResolutionCb" DisplayMemberPath="name" SelectedValuePath="id" Width="200" HorizontalAlignment="Center" Height="25" VerticalContentAlignment="Center" DropDownClosed="DesktopResolutionCb_DropDownClosed" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="6" Orientation="Vertical">
+            <Border Background="LightGray" Height="2">
+            </Border>
+        </StackPanel>
+    </Grid>
+</Window>
