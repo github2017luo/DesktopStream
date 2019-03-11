@@ -26,6 +26,7 @@ namespace DesktopStream.WPF
         private List<string> audioList = new List<string>();
         private int videoBufferSize = 200;
         private int audioBufferSize = 100;
+        private string audioName = "";//音频
 
         public MainWindow(string username,string url)
         {
@@ -56,13 +57,20 @@ namespace DesktopStream.WPF
             //帧率
             frameRate = Convert.ToInt32(configuration.AppSettings.Settings["FrameRate"].Value);
             //音频
-            audioList = AudioHelper.GetMicrophoneDevices3();
-            for (int i = 0; i < audioList.Count; i++)
+            var audioSource= AudioHelper.GetMicrophoneDevices5();
+            if (audioSource.Count != 0)
             {
-                var microphone = new CheckBox();
-                microphone.Content = audioList[i];
-                MicrophonePanel.Children.Add(microphone);
+                AudioCb.ItemsSource = audioSource;
+                AudioCb.SelectedIndex = 0;
+                audioName = audioSource[0].name;
             }
+            //audioList = AudioHelper.GetMicrophoneDevices3();
+            //for (int i = 0; i < audioList.Count; i++)
+            //{
+            //    var microphone = new CheckBox();
+            //    microphone.Content = audioList[i];
+            //    MicrophonePanel.Children.Add(microphone);
+            //}
 
         }
 
@@ -99,14 +107,7 @@ namespace DesktopStream.WPF
                     {
                         //virtual-audio-capturer 这个不能加引号，否则会报错
                         //其他中文的麦克风，需要添加引号，否则会报错
-                        if (audio.Content.ToString().Contains("(桌面音频)"))
-                        {
-                            checkedAudio.Add(audio.Content.ToString().Replace("(桌面音频)", ""));
-                        }
-                        else
-                        {
-                            checkedAudio.Add("\""+audio.Content.ToString()+"\"");
-                        }
+                        
                     }
                 }
             }
@@ -116,34 +117,43 @@ namespace DesktopStream.WPF
 
             string ffmpegCmd = "";
 
-            var strCmd1 = "";
-            var strCmd2 = "";
-            var count = 0;
-            for (int i = 0; i < checkedAudio.Count; i++)
+            ////var strCmd1 = "";
+            ////var strCmd2 = "";
+            ////var count = 0;
+            ////for (int i = 0; i < checkedAudio.Count; i++)
+            ////{
+            ////    strCmd1 += " -f dshow -rtbufsize "+audioBufferSize+"M -i audio=" + checkedAudio[i] + "";
+            ////    strCmd2 += "[" + (count + 1) + ":a]";
+            ////    count++;
+            ////}
+            if (audioName.Contains("(桌面音频)"))
             {
-                strCmd1 += " -f dshow -rtbufsize "+audioBufferSize+"M -i audio=" + checkedAudio[i] + "";
-                strCmd2 += "[" + (count + 1) + ":a]";
-                count++;
+                audioName=(audioName.Replace("(桌面音频)", ""));
             }
-
+            var strCmd1 = " -f dshow -rtbufsize " + audioBufferSize + "M -i audio=" + audioName + "";
             //直播桌面
             var screenWidth = CommonHelper.GetPrimaryScreenWidth();
             var screenHeight = CommonHelper.GetPrimaryScreenHeight();
-            if (count == 0)
+            if (audioName == "")
             {
                 //如果没有选择音频设备，则发送的时候，并不发送音频
                 ffmpegCmd = "-f gdigrab -rtbufsize " + audioBufferSize + "M -r " + frameRate + " -video_size " + screenWidth + "x" + screenHeight + " -i desktop -vf scale=" + desktopResolution + " -vcodec h264 -pix_fmt yuv420p -r " + frameRate + " -f flv " + rtmpUrl;
             }
-            else if (count == 1)
+            else
             {
                 //单音频
                 ffmpegCmd = "-f gdigrab -rtbufsize " + audioBufferSize + "M -r " + frameRate + " -video_size " + screenWidth + "x" + screenHeight + " -i desktop " + strCmd1 + " -vf scale=" + desktopResolution + " -vcodec h264 -r " + frameRate + " -acodec aac -ac 2 -ar 44100 -ab 128k -b:v 1M -pix_fmt yuv420p -f flv " + rtmpUrl;
             }
-            else if (count > 1)
-            {
-                //多音频
-                ffmpegCmd = "-f gdigrab -rtbufsize " + audioBufferSize + "M -r " + frameRate + " -video_size " + screenWidth + "x" + screenHeight + " -i desktop " + strCmd1 + " -filter_complex \"" + strCmd2 + "amerge = inputs =" + (count) + "[aout]\"  -map \"[aout]\" -map 0 -vf scale=" + desktopResolution + " -vcodec h264  -r " + frameRate + " -acodec aac -ac 2 -ar 44100 -ab 128k -b:v 1M -pix_fmt yuv420p -f flv " + rtmpUrl;
-            }
+            //else if (count == 1)
+            //{
+            //    //单音频
+            //    ffmpegCmd = "-f gdigrab -rtbufsize " + audioBufferSize + "M -r " + frameRate + " -video_size " + screenWidth + "x" + screenHeight + " -i desktop " + strCmd1 + " -vf scale=" + desktopResolution + " -vcodec h264 -r " + frameRate + " -acodec aac -ac 2 -ar 44100 -ab 128k -b:v 1M -pix_fmt yuv420p -f flv " + rtmpUrl;
+            //}
+            //else if (count > 1)
+            //{
+            //    //多音频
+            //    ffmpegCmd = "-f gdigrab -rtbufsize " + audioBufferSize + "M -r " + frameRate + " -video_size " + screenWidth + "x" + screenHeight + " -i desktop " + strCmd1 + " -filter_complex \"" + strCmd2 + "amerge = inputs =" + (count) + "[aout]\"  -map \"[aout]\" -map 0 -vf scale=" + desktopResolution + " -vcodec h264  -r " + frameRate + " -acodec aac -ac 2 -ar 44100 -ab 128k -b:v 1M -pix_fmt yuv420p -f flv " + rtmpUrl;
+            //}
             LogHelper.AddFFmpegLog(ffmpegCmd);
             thread.Start(ffmpegCmd);
         }
@@ -299,5 +309,17 @@ namespace DesktopStream.WPF
             desktopResolution = DesktopResolutionCb.Text;
         }
 
+        private void AudioCb_DropDownClosed(object sender, EventArgs e)
+        {
+            var audioSource = AudioHelper.GetMicrophoneDevices5();
+            if (audioSource.Count != 0)
+            {
+                audioName = AudioCb.SelectedValue.ToString();
+            }
+            else
+            {
+                audioName = "";
+            }
+        }
     }
 }

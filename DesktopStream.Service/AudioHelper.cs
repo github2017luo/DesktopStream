@@ -84,5 +84,30 @@ namespace DesktopStream.Service
             return microphoneList;
         }
 
+        public static List<SimpleModel> GetMicrophoneDevices5()
+        {
+            FilterInfoCollection videoDevices = new FilterInfoCollection(FilterCategory.AudioInputDevice);
+            var list = new List<SimpleModel>();
+            if (videoDevices.Count > 0)
+            {
+                for (int i = 0; i < videoDevices.Count; i++)
+                {
+                    var item = new SimpleModel();
+                    item.id = i;
+                    if (videoDevices[i].Name == "virtual-audio-capturer")
+                    {
+                        item.name = "(桌面音频)virtual-audio-capturer";
+                        list.Add(item);
+                    }
+                    else
+                    {
+                        item.name = videoDevices[i].Name;
+                        list.Add(item);
+                    }
+
+                }
+            }
+            return list;
+        }
     }
 }

@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesktopStream.WPF"
         mc:Ignorable="d"
-        Title="桌面直播助手" Height="350" Width="530" ResizeMode="CanMinimize" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
+        Title="桌面直播助手" Height="300" Width="500" ResizeMode="CanMinimize" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="10" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
@@ -38,16 +38,17 @@
             <Label>网速：</Label>
             <Label x:Name="SpeedLabel">0kbps</Label>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Label>音频：</Label>
             <StackPanel x:Name="MicrophonePanel" Orientation="Vertical" VerticalAlignment="Center">
+                <ComboBox Margin="12 0,0,0" x:Name="AudioCb" DisplayMemberPath="name" SelectedValuePath="name" Width="220" HorizontalAlignment="Center" Height="25" VerticalContentAlignment="Center" DropDownClosed="AudioCb_DropDownClosed" />
             </StackPanel>             
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Label>分辨率：</Label>
             <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                <ComboBox x:Name="DesktopResolutionCb" DisplayMemberPath="name" SelectedValuePath="id" Width="200" HorizontalAlignment="Center" Height="25" VerticalContentAlignment="Center" DropDownClosed="DesktopResolutionCb_DropDownClosed" />
+                <ComboBox x:Name="DesktopResolutionCb" DisplayMemberPath="name" SelectedValuePath="id" Width="220" HorizontalAlignment="Center" Height="25" VerticalContentAlignment="Center" DropDownClosed="DesktopResolutionCb_DropDownClosed" />
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="6" Orientation="Vertical">
